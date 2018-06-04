@@ -1,5 +1,10 @@
 package main
 import "log"
+import "time"
+
+func makeTimestamp() int64 {
+    return time.Now().UnixNano() / int64(time.Millisecond)
+}
 
 func calculate(round int64, nElements int64, c chan<-float64) {
 	start := round * nElements
@@ -14,9 +19,11 @@ func calculate(round int64, nElements int64, c chan<-float64) {
 }
 
 func main() {
+	startTime := makeTimestamp()
 	log.Println("starts!")
-	round := int64(100000)
-	nElements := int64(100000)
+	param := 90000
+	round := int64(param)
+	nElements := int64(param)
 	queue := make(chan float64)
 	for i:= int64(0); i< round; i++ {
 		go calculate(i, nElements, queue)
@@ -27,5 +34,6 @@ func main() {
 		//log.Println(message)
 		result += float64(4) * message
 	}
-    log.Println(result)
+	endTime := makeTimestamp()
+    log.Printf("Pi: %1.15f, cosuming millisec: %d", result, endTime-startTime)
 }
